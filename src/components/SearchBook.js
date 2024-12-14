@@ -10,25 +10,36 @@ function Page1() {
         setIsLoading(true); // 로딩 시작
         try {
             console.log(`Fetching data with search term: ${search}`);
-            const targetUrl = `/openapi/search/bookAndWebtoonList?prvKey=c9c9eeedd12fc5ce4602648e80e4a337&title=${search}&viewItemCnt=100&pageNo=1`;
-
+    
+            // 절대 경로를 사용하여 URL 지정
+            const targetUrl = `https://www.kmas.or.kr/openapi/search/bookAndWebtoonList?prvKey=c9c9eeedd12fc5ce4602648e80e4a337&title=${encodeURIComponent(search)}&viewItemCnt=100&pageNo=1`;
+    
+            // API 요청
             const response = await fetch(targetUrl);
-            const data = await response.json();
+    
+            // 응답 확인
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const data = await response.json(); // JSON 데이터 파싱
             console.log("Raw API Response Data:", data);
-
+    
+            // API 응답 처리
             if (data.result?.resultState === "success" && data.itemList) {
                 setItems(data.itemList); // itemList 배열 저장
             } else {
-                console.error("API Error Message:", data.result?.resultMessage);
+                console.error("API Error Message:", data.result?.resultMessage || "Unknown error");
                 setItems([]); // 데이터 초기화
             }
         } catch (error) {
-            console.error("Network or Fetch Error:", error);
+            console.error("Network or Fetch Error:", error.message || error);
             setItems([]); // 데이터 초기화
         } finally {
             setIsLoading(false); // 로딩 종료
         }
     };
+    
 
     const handleSearch = (e) => {
         e.preventDefault();
