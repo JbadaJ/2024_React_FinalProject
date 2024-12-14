@@ -1,0 +1,5 @@
+[[redirects]]
+  from = openapi
+  to = httpswww.kmas.or.kropenapisplat
+  status = 200
+  force = true
